@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- Adding Bootstrap for ease of styling -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+        crossorigin="anonymous">
+
+    <title>FreightWise Programming Test</title>
+    
+    <!-- Using JQuery for building HTML elements to the DOM -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+        crossorigin="anonymous"></script>
+    <script>
+        'use strict';
+
+        /**
+         * Software Developer / Intern application test.
+         *
+         * Doing research and making API calls are an important part of what we do at FreightWise.  This test will
+         * demonstrate your abilities to:
+         *
+         * - Make an API call
+         * - Research an API
+         * - Do basic DOM manipulation
+         * - Parse data
+         * - Handle errors
+         * - Be creative
+         *
+         * Feel free to ask any questions you may have.  Use a lot of comments, and explain why you are doing things.
+         * Don't spend more than 1-2 hours on it - we aren't expecting a finished product.  Feel free to use any third
+         * party libraries, and if you do so, explain why you used them instead of built in browser APIs.
+         *
+         * Instructions:
+         * - Use the axios (https://github.com/axios/axios) request library to make an API call to the OpenWeatherMap
+         *   API for Current Weather Data using this API key:  25e989bd41e3e24ce13173d8126e0fd6
+         *   We've already imported this library to get you started.
+         * - Use either async/await or Promises.
+         * - Get the weather for Brentwood, TN, and write it to the DOM using the `setResults` method below.  Be
+         *   creative and make it look nice.
+         * - Handle errors and use the `setError` method below to display the error.  Also make it look nice.
+         * - If you find any mistakes in the test, fix them, and leave a comment about what you fixed and why.
+         * - Make sure your code is readable and maintainable.
+         * - Use plenty of descriptive comments.
+         * - Make sure your code runs in the latest version of Google Chrome and Firefox (ES6 is allowed).
+         * - Zip up your finished test and send it to hr+software@freightwisellc.com.
+         *
+         * Bonus (pick one, not required, but they give you a chance to show off if you finish quickly):
+         * - Sign up for NewsAPI.org and get the Top Headlines and show them along with the weather.
+         * - Use the browser location API to get the user's current location, and show that location's weather.
+         * - Show a satellite map of the weather in Brentwood.
+         * - Add a reusable dev console logger that shows ISO 8601 DateTime, class name, and all arguments passed in.
+         */
+        class Test {
+            constructor() {
+                this.testResults = document.getElementsByClassName('test-results');
+            }
+
+            async run() {
+                console.log(new Date().toISOString(), '[Test]', 'Running the test');
+                try {
+                    axios({
+                        method: 'get',
+                        url: 'http://api.openweathermap.org/data/2.5/weather?q=Brentwood,us&APPID=25e989bd41e3e24ce13173d8126e0fd6',
+                        responseType: 'json'
+                    })
+                        .then(function (response) {
+                            console.log(response.data);
+                            test.setResults(response.data)
+                        });
+                }
+                catch (error) {
+                    console.error(`Error: ${error}`);
+                    test.setError(response.data)
+                }
+            }
+
+            setError(message) {
+                // TODO: Format the error
+                console.log(message)
+                this.testResults.innerHTML = (message || '').toString();
+            }
+
+            setResults(results) {
+                // Using jQuery to built HTML elements to append to the DOM, attaching bootstrap classes for minor styling
+                console.log(`Results ${results.main.temp}`)
+                let container = $("<div></div>").attr("class", `container text-light`);
+                let row = $("<div></div>").attr("class", `row`);
+                let col = $("<div></div>").attr("class", `col-md-6 mx-auto`);
+                let card = $("<div></div>").attr("class", `bg-dark shadow`);
+                let name = $("<div></div>").attr("id", `temp`).attr("class", `text-center text-primary h1`).text(`${results.name}`);
+                let temp = $("<div></div>").attr("id", `temp`).attr("class", ` h3`).text(`Temperature: ${Math.floor(((results.main.temp - 273.15) * 1.8) + 32)}`);
+                let temp_max = $("<div></div>").attr("id", `temp_max`).attr("class", ` h3`).text(`High: ${Math.floor(((results.main.temp_max - 273.15) * 1.8) + 32)}`);
+                let temp_min = $("<div></div>").attr("id", `temp_min`).attr("class", ` h3`).text(`Low: ${Math.floor(((results.main.temp_min - 273.15) * 1.8) + 32)}`);
+                let humidity = $("<div></div>").attr("id", `humidity`).attr("class", ` h3`).text(`Humidity: ${results.main.humidity}`);
+                let pressure = $("<div></div>").attr("id", `pressure`).attr("class", ` h3`).text(`Pressure: ${results.main.pressure}`);
+                $(card).append(name, temp, temp_max, temp_min, humidity, pressure);
+                $(col).append(card);
+                $(row).append(col);
+                $(container).append(row);
+                $(".test-results").append(container);
+            }
+        }
+    </script>
+
+    <style>
+        .button-container {
+            text-align: center;
+        }
+
+        .button-container>button {
+            margin: 0;
+            padding: 10px 18px;
+            color: white;
+            background-color: #008000;
+            border: none;
+            border-radius: 3px;
+            transition: all 200ms ease-in-out;
+            font-size: 14px;
+        }
+
+        .button-container>button:hover {
+            background-color: #00A000;
+        }
+
+        .button-container>button:active {
+            background-color: #006000;
+        }
+    </style>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <div class="test-results"></div>
+
+    <div class="button-container"></div>
+
+    <script>
+        'use strict';
+
+        /**
+         * Creates a button for kicking off the test and adds it to the DOM.
+         *
+         * @param {HTMLElement} context  the parent element to add the button to
+         * @param {Test}        test     the test to be executed
+         * @returns {HTMLElement} the button added to the test
+         */
+        function addButtonForTest(context, test) {
+            let testButton = document.createElement('button');
+
+            testButton.type = 'button';
+            testButton.innerText = 'Get the Nashville Weather';
+            testButton.onclick = () => test.run();
+
+            context.appendChild(testButton);
+
+            return testButton;
+        }
+
+        // Create the Test and add a button to the UI for running the test
+        const test = new Test();
+        const buttonContainer = document.getElementsByClassName('button-container')[0];
+
+        addButtonForTest(buttonContainer, test);
+    </script>
+</body>
+
+</html>
